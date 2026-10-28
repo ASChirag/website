@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gust – a pocket weather station</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dcebf5;--ink:#0f2238;--accent:#2f4bff;--on-accent:#fff;--sun:#ffd23f;--card:#f2f8fc;--muted:#47607a;--line:#b4cbdc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1828;--ink:#e6f0fa;--accent:#93a5ff;--on-accent:#0b1828;--card:#13263c;--muted:#9bb0c6;--line:#27405b}}
+:root[data-theme="dark"]{--bg:#0b1828;--ink:#e6f0fa;--accent:#93a5ff;--on-accent:#0b1828;--card:#13263c;--muted:#9bb0c6;--line:#27405b}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.05rem/1.6 "DM Sans",system-ui,sans-serif;overflow-x:hidden}
+h1,h2{font-family:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;line-height:1.02;margin:0}
+a,button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:68rem;margin:0 auto;padding:0 1.5rem}
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.4rem 0}
+.logo{font:800 1.5rem "Bricolage Grotesque",sans-serif;letter-spacing:-.02em}
+.btn{display:inline-block;background:var(--accent);color:var(--on-accent);border:0;border-radius:999px;padding:.8rem 1.6rem;font-weight:500;cursor:pointer;text-decoration:none;transition:transform .2s}
+.btn:hover{transform:translateY(-3px) rotate(-1deg)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;padding:2rem 0 4rem}
+h1{font-size:clamp(3rem,8vw,6.2rem);font-weight:800;letter-spacing:-.04em}
+h1 span{display:inline-block;opacity:0;transform:translateY(.8em) rotate(4deg);animation:rise .8s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.lede{max-width:30rem;color:var(--muted);margin:1.4rem 0 2rem}
+.stage{width:100%;height:auto;overflow:visible}
+.sun{transform-origin:200px 110px;animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.cloud{animation:drift 14s ease-in-out infinite alternate}
+.cloud.b{animation-duration:19s;animation-direction:alternate-reverse}
+@keyframes drift{from{transform:translateX(-30px)}to{transform:translateX(40px)}}
+.cups{transform-origin:200px 215px;animation:spin 2.4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.readout{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+.temp{font:800 clamp(2.6rem,6vw,4rem)/1 "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.unit{background:transparent;border:2px solid var(--ink);border-radius:999px;padding:.2rem .9rem;cursor:pointer;transition:background .2s,color .2s}
+.unit:hover{background:var(--ink);color:var(--bg)}
+.band{background:var(--card);border-block:1px solid var(--line);padding:4rem 0}
+.band h2{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:1.5rem;max-width:34rem}
+.spark{width:100%;height:120px}
+.spark path{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1200;stroke-dashoffset:1200}
+.spark.in path{animation:draw 2.4s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.faq{padding:4rem 0}
+.faq h2{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:1.5rem}
+.item{border-top:1px solid var(--line)}
+.item:last-child{border-bottom:1px solid var(--line)}
+.q{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:1.2rem 0;text-align:left;font:500 1.25rem "Bricolage Grotesque",sans-serif;cursor:pointer}
+.q i{font-style:normal;font-size:1.8rem;transition:transform .3s}
+.item.open .q i{transform:rotate(45deg)}
+.a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.item.open .a{grid-template-rows:1fr}
+.a p{overflow:hidden;margin:0;color:var(--muted);max-width:40rem}
+.item.open .a p{padding-bottom:1.2rem}
+footer{text-align:center;padding:3rem 0 4rem}
+footer h2{font-size:clamp(2rem,6vw,4rem);margin-bottom:1.5rem}
+@media (max-width:760px){.hero{grid-template-columns:1fr}.stage{max-width:22rem;margin:0 auto}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}h1 span{opacity:1;transform:none}.spark path{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><span class="logo">Gust</span><a class="btn" href="#order">Pre-order</a></nav>
+
+  <section class="hero">
+    <div>
+      <h1 id="title" aria-label="The sky, in your pocket."></h1>
+      <p class="lede">Gust is a palm-sized weather station. It reads temperature, wind and pressure where you actually are, and sends it to your phone.</p>
+      <a class="btn" href="#order">Get yours</a>
+      <div class="readout" aria-live="off">
+        <span class="temp" id="temp">24.0°C</span>
+        <button class="unit" id="unit" type="button">Switch to °F</button>
+      </div>
+    </div>
+    <svg class="stage" viewBox="0 0 400 300" role="img" aria-label="Illustration of a weather station with a spinning wind sensor under a pulsing sun">
+      <g class="sun"><circle cx="200" cy="110" r="70" fill="var(--sun)"/><circle cx="200" cy="110" r="95" fill="var(--sun)" opacity=".25"/></g>
+      <g class="cloud" fill="var(--card)"><ellipse cx="90" cy="70" rx="48" ry="20"/><ellipse cx="118" cy="58" rx="32" ry="20"/></g>
+      <g class="cloud b" fill="var(--card)"><ellipse cx="310" cy="150" rx="44" ry="18"/><ellipse cx="288" cy="140" rx="28" ry="17"/></g>
+      <rect x="194" y="215" width="12" height="75" rx="6" fill="var(--ink)"/>
+      <rect x="150" y="285" width="100" height="10" rx="5" fill="var(--ink)"/>
+      <g class="cups" stroke="var(--ink)" stroke-width="5" stroke-linecap="round">
+        <line x1="200" y1="215" x2="200" y2="180"/><line x1="200" y1="215" x2="231" y2="233"/><line x1="200" y1="215" x2="169" y2="233"/>
+        <circle cx="200" cy="176" r="10" fill="var(--accent)"/><circle cx="234" cy="235" r="10" fill="var(--accent)"/><circle cx="166" cy="235" r="10" fill="var(--accent)"/>
+      </g>
+      <circle cx="200" cy="215" r="8" fill="var(--ink)"/>
+    </svg>
+  </section>
+</div>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Today’s temperature, drawn as it happened.</h2>
+    <svg class="spark" id="spark" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" aria-label="Line chart of temperature rising through the day and cooling in the evening">
+      <path d="M0 95 C60 90 90 70 150 66 S240 30 300 24 S400 20 450 44 S540 90 600 100"/>
+    </svg>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="faq">
+    <h2>Quick questions</h2>
+    <div class="item"><button class="q" aria-expanded="false">How long does the battery last?<i>+</i></button><div class="a"><p>About three months on one USB-C charge, since Gust sleeps between readings.</p></div></div>
+    <div class="item"><button class="q" aria-expanded="false">Does it work without Wi-Fi?<i>+</i></button><div class="a"><p>Yes. It stores readings on the device and syncs them when your phone is nearby.</p></div></div>
+    <div class="item"><button class="q" aria-expanded="false">Can I leave it outside?<i>+</i></button><div class="a"><p>Gust is splash-proof, so rain is fine. Keep it out of direct sun for the most accurate temperature.</p></div></div>
+  </section>
+
+  <footer id="order">
+    <h2>Know before you step out.</h2>
+    <a class="btn" href="#order">Pre-order Gust</a>
+  </footer>
+</div>
+
+<script>
+// Headline: one staggered entrance
+var t=document.getElementById('title');
+"The sky, in your pocket.".split(' ').forEach(function(w,i){
+  var s=document.createElement('span');s.textContent=w;s.style.animationDelay=(0.15+i*0.14)+'s';s.setAttribute('aria-hidden','true');
+  t.appendChild(s);t.appendChild(document.createTextNode(' '));
+});
+// Live-ish temperature with unit toggle
+var c=24,f=false,tempEl=document.getElementById('temp'),unitEl=document.getElementById('unit');
+function show(){tempEl.textContent=f?(c*9/5+32).toFixed(1)+'°F':c.toFixed(1)+'°C';unitEl.textContent=f?'Switch to °C':'Switch to °F'}
+unitEl.addEventListener('click',function(){f=!f;show()});
+setInterval(function(){c=Math.max(22,Math.min(27,c+(Math.random()-.5)*.4));show()},1500);
+// Draw the chart when it scrolls into view
+var sp=document.getElementById('spark');
+if('IntersectionObserver' in window){
+  new IntersectionObserver(function(e,o){if(e[0].isIntersecting){sp.classList.add('in');o.disconnect()}},{threshold:.4}).observe(sp);
+}else{sp.classList.add('in')}
+// Accordion
+document.querySelectorAll('.q').forEach(function(b){
+  b.addEventListener('click',function(){
+    var it=b.parentElement,o=it.classList.toggle('open');b.setAttribute('aria-expanded',o);
+  });
+});
+</script>
+</body>
+</html>
